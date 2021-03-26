@@ -5,10 +5,10 @@ const { AuthenticationError } = require('apollo-server-express');
 
 const { signToken } = require('../utils/auth')
 
-//That's all we need to get this sample code up and running. Nothing to import for the moment, just a simple object called resolvers with a Query nested object that holds a series of methods. These methods get the same name of the query or mutation they are resolvers for. This way, when we use the query helloWorld, this helloWorld() method will execute and return the string "Hello world!
+// These methods get the same name of the query or mutation they are resolvers for.
 
 
-// the resolver queries the MongoDB database and retrieves thought data/ data
+// the resolver queries the MongoDB database and retrieves or executes the mutations or query data
 
 // resolvers are similar to controllers we've useed in other projects they define what the routes should execute 
 
