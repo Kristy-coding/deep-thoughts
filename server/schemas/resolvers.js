@@ -26,6 +26,26 @@ const resolvers = {
       thoughts: async (parent, { username }) => {
         const params = username ? { username } : {};
         return Thought.find(params).sort({createdAt: -1 });
+      },
+      //As you can see in the preceding code, similar to how we handled thoughts, we destructure the _id argument value and place it into our .findOne() method to look up a single thought by its _id
+      thought: async (parent, { _id }) => {
+        return Thought.findOne ({ _id });
+      },
+      //With these query resolvers, we can now look up either all users or a single user by their username value. Both of them will omit the Mongoose-specific __v property and the user's password information, which doesn't ever have to return anyway. We also populate the fields for friends and thoughts, so we can get any associated data in return
+
+      // get all users 
+      users: async()=> {
+        return User.find()
+          .select('-__v -password')
+          .populate('friends')
+          .populate('thoughts');
+      },
+      // get a user by username 
+      user: async(parent, { username }) => {
+        return User.findOne({ username })
+          .select('-__v -password')
+          .populate('friends')
+          .populate('thoughts');
       }
     }
   };
