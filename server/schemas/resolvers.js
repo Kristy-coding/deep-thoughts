@@ -1,6 +1,9 @@
 //add the following code to import the Mongoose models:
 const { User, Thought } = require('../models');
 
+const { AuthenticationError } = require('apollo-server-express');
+
+const { signToken } = require('../utils/auth')
 
 //That's all we need to get this sample code up and running. Nothing to import for the moment, just a simple object called resolvers with a Query nested object that holds a series of methods. These methods get the same name of the query or mutation they are resolvers for. This way, when we use the query helloWorld, this helloWorld() method will execute and return the string "Hello world!
 
@@ -23,6 +26,19 @@ const { User, Thought } = require('../models');
 
 const resolvers = {
     Query: {
+      //In resolvers.js, you'll need to update the me() method to check for the existence of context.user. If no context.user property exists, then we know that the user isn't authenticated and we can throw an AuthenticationError
+      me: async (parent, args, context) => {
+        if (context.user) {
+          const userData = await User.findOne({ _id: context.user._id })
+            .select('-__v -password')
+            .populate('thoughts')
+            .populate('friends');
+      
+          return userData;
+        }
+      
+        throw new AuthenticationError('Not logged in');
+      },
       thoughts: async (parent, { username }) => {
         const params = username ? { username } : {};
         return Thought.find(params).sort({createdAt: -1 });
@@ -46,6 +62,34 @@ const resolvers = {
           .select('-__v -password')
           .populate('friends')
           .populate('thoughts');
+      }
+    },
+    Mutation: {
+ 
+      addUser: async(parent, args) => {
+        //Here, the Mongoose User model creates a new user in the database with whatever is passed in as the args
+        
+        const user = await User.create(args);
+        //////Next, update the two mutation resolvers to sign a token and return an object that combines the token with the user's data.
+        const token = signToken(user);
+
+        return { token, user };
+      },
+      login: async(parent, { email, password }) => {
+        const user = await User.findOne({ email });
+
+        if (!user) {
+          throw new AuthenticationError('Incorrect credentials');
+        }
+        const correctPw = await user.isCorrectPassword(password);
+
+        if(!correctPw) {
+          throw new AuthenticationError('Incorrect credentials');
+        }
+        //Next, update the two mutation resolvers to sign a token and return an object that combines the token with the user's data.
+        const token = signToken(user);
+        return { token, user };
+
       }
     }
   };
