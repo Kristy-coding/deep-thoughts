@@ -15,7 +15,7 @@ import Home from './pages/Home';
 //Notice how we have to use an absolute path to the server? The React environment runs at localhost:3000, and the server environment runs at localhost:3001. So if we just used /graphl, as we've done previously, the requests would go to localhost:3000/graphql—which isn't the address for the back-end server. We'll touch more on this soon; for now, let's get up and running
 //establish the connection to the back-end server's /graphql endpoint
 const client = new ApolloClient({
-  uri: 'http://localhost:3001/graphql'
+  uri:'/graphql'
 });
 
 function App() {

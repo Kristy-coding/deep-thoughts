@@ -1,3 +1,4 @@
+const path = require('path');
 const express = require('express');
 // import ApolloServer
 const { ApolloServer } = require('apollo-server-express');
@@ -25,6 +26,17 @@ server.applyMiddleware({ app });
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+
+
+// Serve up static assets (the following two pieces of code will only go into effect when we go into production)
+//We just added two important pieces of code that will only come into effect when we go into production. First, we check to see if the Node environment is in production. If it is, we instruct the Express.js server to serve any files in the React application's build directory in the client folder. We don't have a build folder yet—because remember, that's for production only
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../client/build')));
+}
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/build/index.html'));
+});
 
 db.once('open', () => {
   app.listen(PORT, () => {
