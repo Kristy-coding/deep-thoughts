@@ -11,6 +11,8 @@ import ThoughtList from  '../components/ThoughtList';
 
 import FriendList from '../components/FriendList';
 
+import ThoughtForm from '../components/ThoughtForm';
+
 const Home = () => {
   // use useQuery hook to make query request
   //Apollo's react-hooks library provides a loading property to indicate that the request isn't done just yet. When it's finished and we have data returned from the server, that information is stored in the destructured data property.
@@ -31,6 +33,11 @@ const Home = () => {
   return (
     <main>
       <div className='flex-row justify-space-between'>
+        {loggedIn && (
+          <div className="col-12 mb-3">
+            <ThoughtForm />
+          </div>
+        )}
         <div className={`col-12 mb-3 ${loggedIn && 'col-lg-8'}`}>
           {/*With this, we use a ternary operator to conditionally render the <ThoughtList> component. If the query hasn't completed and loading is still defined, we display a message to indicate just that. Once the query is complete and loading is undefined, we pass the thoughts array and a custom title to the <ThoughtList> component as props*/}
           {loading ? (

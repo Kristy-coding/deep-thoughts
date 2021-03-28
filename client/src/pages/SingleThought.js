@@ -8,6 +8,10 @@ import { QUERY_THOUGHT } from '../utils/queries';
 
 import ReactionList from '../components/ReactionList';
 
+import Auth from '../utils/auth';
+
+import ReactionForm from '../components/ReactionForm';
+
 const SingleThought = props => {
 
   const { id: thoughtId } = useParams();
@@ -41,6 +45,7 @@ const SingleThought = props => {
       </div>
       {/*The only new addition is adding the ReactionList component at the bottom, passing in the reactions array as a prop. We combined this with a thought.reactionCount > 0 expression to prevent rendering the reactions if the array is empty.*/}
         {thought.reactionCount > 0 && <ReactionList reactions= {thought.reactions} />}
+        {Auth.loggedIn() && <ReactionForm thoughtId={thought._id} />}
     </div>
   );
 };
