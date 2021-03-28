@@ -26,7 +26,20 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 //Notice how we have to use an absolute path to the server? The React environment runs at localhost:3000, and the server environment runs at localhost:3001. So if we just used /graphl, as we've done previously, the requests would go to localhost:3000/graphql—which isn't the address for the back-end server. We'll touch more on this soon; for now, let's get up and running
 //establish the connection to the back-end server's /graphql endpoint
 const client = new ApolloClient({
-  uri:'/graphql'
+
+  //With this request configuration, we use the .setContext() method to set the HTTP request headers of every request to include the token, whether the request needs it or not. This is fine, because if the request doesn't need the token, our server-side resolver function won't check for it.
+
+  //To recap, with auth.js we just created and implemented functionality that when a user signs up or logs in and receives an access token in return, we store it in localStorage. With this token, we can decode it to retrieve the logged-in user's nonsensitive data, check if the token is still valid, and use it to make requests to the server.
+  request: operation => {
+    const token = localStorage.getItem('id_token');
+
+    operation.setContext({
+      headers: {
+        authorization: token ? `Bearer ${token}` : ''
+      }
+    });
+  },
+  uri: '/graphql'
 });
 
 function App() {
